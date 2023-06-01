@@ -18,7 +18,6 @@ export const create = async (req, res) => {
             return res.status(400).send({ err: true, msg: "All fields are required" })
         }
         const findCategory = await Models.find({ name: category })
-        console.log(findCategory);
         if (findCategory.length > 0) {
             const newCar = new Cars({
                 name,

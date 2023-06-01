@@ -55,9 +55,7 @@ export const getImages = async (req, res) => {
 export const getCars = async (req, res) => {
     try {
         const model = await Models.findOne({ _id: req.params.category })
-        console.log(model);
         const cars = await Cars.find({ category: model.name })
-        console.log(cars);
         return res.status(200).send({ ok: true, cars })
     } catch (error) {
         res.status(500).send({ err: true, msg: error.message })

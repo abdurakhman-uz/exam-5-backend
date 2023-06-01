@@ -11,7 +11,6 @@ export const login = async (req, res) => {
     const { username, password } = req.body
     try {
         const user = await Users.find({ username })
-        console.log(user);
 
         if (!user.length > 0) {
             return res.status(404).json({ err: true, msg: "User not found" })
@@ -65,6 +64,47 @@ export const register = async (req, res) => {
     }
 }
 
+export const update = async (req, res) => {
+    const user_id = req.user.id
+    const { username, password } = req.body
+    try {
+        const hashPassword = flurix.hashPassword(password)
+        const oldUser = await Users.findById({ _id: user_id })
+
+        const user = await Users.findByIdAndUpdate({ _id: user_id }, {
+            username: username ? username : oldUser.username,
+            password: password ? hashPassword : oldUser.password
+        })
+        return res.status(200).send({
+            err: false,
+            msg: "User updated"
+        })
+
+    } catch (error) {
+        return res.status(500).send({
+            err: true,
+            msg: error.message
+        })
+
+    }
+}
+
+export const admin = async (req, res) => {
+    try {
+        const user = req.user
+        const findUser = await Users.findOne({ _id: user.id })
+        if (findUser.role !== "admin") {
+            return res.status(401).json({ err: true, msg: "Unauthorized" })
+        }
+        return res.status(200).send({
+            err: false,
+            admin: true
+        })
+    } catch (error) {
+        return res.status(500).json({ err: true, msg: error.message })
+    }
+}
+
 export const wishlist = async (req, res) => {
     try {
 
@@ -72,11 +112,9 @@ export const wishlist = async (req, res) => {
             const token = req.headers.token
             const decoded = jwt.verify(token, process.env.JWT_SECRET)
             const wishlists = await Wishlist.findOne({ name: decoded.username })
-            console.log(wishlists);
             let wishs = wishlists.products
             const { product_id } = req.body
             const newWishs = wishs.push(product_id)
-            console.log(newWishs);
             const wishlist = await Wishlist({ user: decoded.id, products: newWishs })
 
         }
@@ -117,7 +155,7 @@ export const savat = async (req, res) => {
         if (req.headers.token) {
             const token = req.headers.token
             const decoded = jwt.verify(token, process.env.JWT_SECRET)
-            const wishlistsFind = await Savat.findOne({ username: decoded.username,  })
+            const wishlistsFind = await Savat.findOne({ username: decoded.username, })
             const { product_id } = req.body
             let wishs = wishlistsFind.products ? wishlistsFind.products : []
             const newWishs = wishs.push(product_id)
@@ -126,6 +164,23 @@ export const savat = async (req, res) => {
             return res.status(200).send({
                 err: false,
                 msg: "Added to Savat"
+            })
+        }
+
+        return res.status(401).json({ err: true, msg: "Unauthorized" })
+    }
+    catch (error) {
+        res.status(500).json({ err: true, msg: error.message })
+    }
+}
+
+export const userInfo = async (req, res) => {
+    try {
+        if (req.user) {
+            const user = await Users.findOne({ _id: req.user.id })
+            return res.status(200).send({
+                err: false,
+                user: user
             })
         }
 
