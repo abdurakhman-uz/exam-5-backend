@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { admin, login, register, savat, update, userInfo, wishlist } from "../controllers/users.js";
+import { admin, editUser, getUsers, login, register, savat, update, userInfo, wishlist } from "../controllers/users.js";
 import authenticateToken from "../middlewares/jwt.js"
 import userAuthenticateToken from "../middlewares/user_jwt.js"
 
@@ -14,5 +14,7 @@ router.get("/info", userAuthenticateToken, userInfo)
 router.post("/admin", authenticateToken, admin)
 router.post("/add-wishlist", wishlist)
 router.post("/add-savat", savat)
+router.get("/admin/users", authenticateToken, getUsers)
+router.post("/admin/user/update/:id", authenticateToken, editUser)
 
 export default router;

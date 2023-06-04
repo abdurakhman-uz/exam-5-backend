@@ -1,7 +1,7 @@
 import { Router } from "express";
 import multer from 'multer';
 import path from 'path';
-import { create, get, getCars, getImages } from "../controllers/models.js";
+import { create, createImage, get, getCars, getImages } from "../controllers/models.js";
 import authenticateToken from "../middlewares/jwt.js";
 
 const storage = multer.diskStorage({
@@ -22,5 +22,6 @@ router.get("/models", get)
 router.get('/images/:imageName', getImages )
 router.get('/cars/:category', getCars )
 router.post("/models/create", authenticateToken, upload.single('file'), create)
+router.post("/models/image/create", authenticateToken, upload.single('file'), createImage)
 
 export default router;

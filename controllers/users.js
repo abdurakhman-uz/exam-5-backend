@@ -157,10 +157,20 @@ export const savat = async (req, res) => {
             const decoded = jwt.verify(token, process.env.JWT_SECRET)
             const wishlistsFind = await Savat.findOne({ username: decoded.username, })
             const { product_id } = req.body
-            let wishs = wishlistsFind.products ? wishlistsFind.products : []
+            let wishs = wishlistsFind ? wishlistsFind.products : []
             const newWishs = wishs.push(product_id)
-            const wishlists = await Savat.findOneAndUpdate({ username: decoded.username, user_id: decoded.id, products: wishs })
-            wishlists.save()
+            console.log(wishs);
+            if (wishlistsFind) {
+                const update = await Savat.findOneAndUpdate({ username: decoded.username, user_id: decoded.id, products: wishs })
+                return res.status(200).send({
+                    err: false,
+                    msg: "Added to Savat"
+                })
+            }
+
+            let newSavat = await Savat({ username: decoded.username, user_id: decoded.id, products: wishs });
+            await newSavat.save();
+
             return res.status(200).send({
                 err: false,
                 msg: "Added to Savat"
@@ -188,5 +198,39 @@ export const userInfo = async (req, res) => {
     }
     catch (error) {
         res.status(500).json({ err: true, msg: error.message })
+    }
+}
+
+export const getUsers = async (req, res) => {
+    try {
+        const users = await Users.find()
+        res.status(200).json({err: false, users})
+    } catch (error) {
+        res.status(500).json({err: true, err: error.message})
+    }
+}
+
+export const editUser = async (req, res) => {
+    const user_id = req.params.id
+    const { username, password } = req.body
+    try {
+        const hashPassword = flurix.hashPassword(password)
+        const oldUser = await Users.findById({ _id: user_id })
+
+        const user = await Users.findByIdAndUpdate({ _id: user_id }, {
+            username: username ? username : oldUser.username,
+            password: password ? hashPassword : oldUser.password
+        })
+        return res.status(200).send({
+            err: false,
+            msg: "User updated"
+        })
+
+    } catch (error) {
+        return res.status(500).send({
+            err: true,
+            msg: error.message
+        })
+
     }
 }

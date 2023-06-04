@@ -13,12 +13,20 @@ export const get = async (req, res) => {
 }
 
 export const create = async (req, res) => {
-    const { name } = req.headers
-    const fileName = req.file.filename
+    const { name, img } = req.body
     try {
-        let newModel = await Models({ name: name, image: fileName });
+        let newModel = await Models({ name: name, image: img });
         await newModel.save();
         return res.status(201).send({ ok: true, msg: "Create Successfully" })
+    } catch (error) {
+        return res.send({ err: true, msg: error.message })
+    }
+}
+
+export const createImage = async (req, res) => {
+    const fileName = req.file.filename
+    try {
+        return res.status(201).send({ ok: true, msg: "Upload Successfully", file: fileName})
     } catch (error) {
         const imagePath = `uploads/category/${fileName}`;
         fs.unlink(imagePath, (err) => {
