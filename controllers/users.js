@@ -39,7 +39,7 @@ export const login = async (req, res) => {
 }
 
 export const register = async (req, res) => {
-    const { username, password } = req.body
+    const { username, email, password } = req.body
     try {
         const user = await Users.find({ username })
         if (user.username === username) {
@@ -50,7 +50,7 @@ export const register = async (req, res) => {
         }
 
         const pass = flurix.hashPassword(password)
-        let newUser = await Users({ username: username, password: pass });
+        let newUser = await Users({ username, email, password: pass });
         await newUser.save();
         return res.status(200).send({
             err: false,
@@ -66,13 +66,14 @@ export const register = async (req, res) => {
 
 export const update = async (req, res) => {
     const user_id = req.user.id
-    const { username, password } = req.body
+    const { username, email, password } = req.body
     try {
         const hashPassword = flurix.hashPassword(password)
         const oldUser = await Users.findById({ _id: user_id })
 
         const user = await Users.findByIdAndUpdate({ _id: user_id }, {
             username: username ? username : oldUser.username,
+            email: email ? email : oldUser.email,
             password: password ? hashPassword : oldUser.password
         })
         return res.status(200).send({
