@@ -14,7 +14,8 @@ export const get = async (req, res) => {
 export const create = async (req, res) => {
     try {
         const { category, name, marka, tonirovka, motor, year, color, distance, gearbook, desc, price, cover, images, infoImage } = req.body
-        if (!category || !name || !marka || !tonirovka || !motor || !year || !color || !distance || !gearbook || !desc || !price || !cover || !images || !infoImage) {
+        console.log(category, name, marka, tonirovka, motor, year, color, distance, gearbook, desc, price, cover, images, infoImage);
+        if (!category || !name || !marka || !tonirovka || !motor || !year || !color || !distance || !gearbook || !desc || !price || !cover || !infoImage) {
             console.log(category, name, marka, tonirovka, motor, year, color, distance, gearbook, desc, price, cover, images, infoImage);
             return res.status(400).send({ err: true, msg: "All fields are required" })
         }

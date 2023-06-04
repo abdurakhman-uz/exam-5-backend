@@ -241,6 +241,12 @@ export const deleteUser = async (req, res) => {
     try {
 
         const user = await Users.findByIdAndDelete({ _id: user_id })
+        if (user.role === "admin") {
+            return res.send({
+                err: true,
+                msg: "Can't delete Admin user"
+            })
+        }
         return res.status(200).send({
             err: false,
             msg: "User Deleted"
