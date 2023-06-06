@@ -110,12 +110,9 @@ export const allCars = async (req, res) => {
 }
 
 export const createImages = async (req, res) => {
-    const files = req.files
-    let filenames = []
-    files.map(f => filenames.push(f.filename))
+    const files = req.file.filename
     try {
-        console.log(filenames);
-        if (files) return res.send({ err: false, msg: filenames })
+        if (files) return res.send({ err: false, msg: files })
     } catch (error) {
 
         return res.status(500).send({ err: true, msg: error.message });
