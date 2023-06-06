@@ -189,7 +189,7 @@ export const savat = async (req, res) => {
 export const savatGet = async (req, res) => {
     try {
 
-        const wishlistsFind = await Savat.findOne({ username: req.user.username, })
+        const wishlistsFind = await Savat.findOne({ username: req.user.username })
         let wishs = wishlistsFind ? wishlistsFind?.products : []
         let newWishs = []
         if (wishlistsFind) {
@@ -198,6 +198,7 @@ export const savatGet = async (req, res) => {
                 let onn = await Cars.findById({ _id: wishs[i] })
                 newWishs.push(onn)
             }
+            console.log(wishlistsFind);
 
             return res.status(200).send({
                 err: false,
