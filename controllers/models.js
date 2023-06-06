@@ -26,7 +26,7 @@ export const create = async (req, res) => {
 export const createImage = async (req, res) => {
     const fileName = req.file.filename
     try {
-        return res.status(201).send({ ok: true, msg: "Upload Successfully", file: fileName})
+        return res.status(201).send({ ok: true, msg: "Upload Successfully", file: fileName })
     } catch (error) {
         const imagePath = `uploads/category/${fileName}`;
         fs.unlink(imagePath, (err) => {
@@ -67,5 +67,19 @@ export const getCars = async (req, res) => {
         return res.status(200).send({ ok: true, cars })
     } catch (error) {
         res.status(500).send({ err: true, msg: error.message })
+    }
+}
+
+export const update = async (req, res) => {
+    const { id } = req.params
+    const { name, img } = req.body
+    try {
+        let model = await Models.findById({ _id: id })
+        let newModel = await Models.findByIdAndUpdate({ _id: id }, {
+            name: name? name : model.name,
+        });
+        return res.status(200).send({ ok: true, msg: "Update Successfully" })
+    } catch (error) {
+        return res.send({ err: true, msg: error.message })
     }
 }
