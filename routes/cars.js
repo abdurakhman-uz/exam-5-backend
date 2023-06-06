@@ -11,7 +11,10 @@ router.get("/info/:id", getInfoCar)
 router.post("/create", authenticateToken, create);
 router.post("/create/infoImage", authenticateToken, upload.single('file'), createImage);
 router.post("/create/coverImage", authenticateToken, upload.single('file'), createCoverImage);
-router.post("/create/images", authenticateToken, upload.array('file'), createImages);
+router.post("/create/images", authenticateToken, upload.single('file'), createImages);
+// router.post("/create/images", authenticateToken, (req, res) => {
+//     console.log(req.url);
+// });
 router.post("/update/:id", authenticateToken, update);
 router.post("/delete/:id", authenticateToken, deleted);
 // router.post("/create/image", authenticateToken, upload.single('file'), createImage);
