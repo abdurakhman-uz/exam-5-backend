@@ -8,6 +8,7 @@ const savatSchema = new mongoose.Schema({
     user_id: {
         type: String,
         required: true,
+        unique: true
     },
     products: {
         type: Array,
