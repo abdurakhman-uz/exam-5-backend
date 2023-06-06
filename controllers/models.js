@@ -83,3 +83,13 @@ export const update = async (req, res) => {
         return res.send({ err: true, msg: error.message })
     }
 }
+
+export const deleteModel = async (req, res) => {
+    const { id } = req.params
+    try {
+        let model = await Models.findByIdAndDelete({ _id: id })
+        return res.status(200).send({ ok: true, msg: "Delete Successfully" })
+    } catch (error) {
+        return res.send({ err: true, msg: error.message })
+    }
+}
