@@ -185,6 +185,23 @@ export const savat = async (req, res) => {
     }
 }
 
+export const savatGet = async (req, res) => {
+    try {
+
+        const wishlistsFind = await Savat.findOne({ username: req.user.username, })
+        let wishs = wishlistsFind ? wishlistsFind?.products : []
+        if (wishlistsFind) {
+            return res.status(200).send({
+                err: false,
+                msg: wishs
+            })
+        }
+    }
+    catch (error) {
+        res.status(500).json({ err: true, msg: error.message })
+    }
+}
+
 export const userInfo = async (req, res) => {
     try {
         if (req.user) {
@@ -205,9 +222,9 @@ export const userInfo = async (req, res) => {
 export const getUsers = async (req, res) => {
     try {
         const users = await Users.find()
-        res.status(200).json({err: false, users})
+        res.status(200).json({ err: false, users })
     } catch (error) {
-        res.status(500).json({err: true, err: error.message})
+        res.status(500).json({ err: true, err: error.message })
     }
 }
 
