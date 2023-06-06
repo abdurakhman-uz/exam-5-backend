@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken"
 import dotenv from "dotenv"
 import Wishlist from "../schemas/wishlist.js"
 import Savat from "../schemas/savat.js"
+import Cars from "../schemas/cars.js"
 dotenv.config()
 
 
@@ -190,10 +191,17 @@ export const savatGet = async (req, res) => {
 
         const wishlistsFind = await Savat.findOne({ username: req.user.username, })
         let wishs = wishlistsFind ? wishlistsFind?.products : []
+        let newWishs = []
         if (wishlistsFind) {
+
+            for (let i = 0; i < wishs.length; i++){
+                let onn = await Cars.findById({ _id: wishs[i] })
+                newWishs.push(onn)
+            }
+
             return res.status(200).send({
                 err: false,
-                msg: wishs
+                msg: newWishs.filter(a => a)
             })
         }
     }
@@ -256,14 +264,14 @@ export const editUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
     const user_id = req.params.id
     try {
-
-        const user = await Users.findByIdAndDelete({ _id: user_id })
+        const user = await Users.findById({ _id: user_id })
         if (user.role === "admin") {
             return res.send({
                 err: true,
                 msg: "Can't delete Admin user"
             })
         }
+        const users = await Users.findByIdAndDelete({ _id: user_id })
         return res.status(200).send({
             err: false,
             msg: "User Deleted"
